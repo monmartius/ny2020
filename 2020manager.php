@@ -63,7 +63,7 @@ class DB{
 
         if($query){
 
-            $this->stmnt = $this->stmnt[$query];
+            $this->stmnt = $this->stmnts[$query];
         }
 
         if(!$data){
@@ -132,7 +132,6 @@ $comment = $db->query('comment', $user['id'])->fetch();
 
 
 
-if(isset($_REQUEST[''])){}
 
 ?>
 <!DOCTYPE html>
@@ -184,7 +183,7 @@ if(isset($_REQUEST[''])){}
 <table class="user-table">
 
 <tr>
-    <td>id</td><td>name</td><td>email</td><td>Комментари</td> 
+    <td>id</td><td>name</td><td>email</td><td>Комментарий</td> 
 </tr>        
     
 

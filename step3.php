@@ -8,7 +8,7 @@
                 <div class="question question-trees">
 
                     <div class="question__title">
-                       Загадайте своё главное желание на&nbsp;2020 год, <span class="question__title" style="font-size: 70%;">мы отправим его Деду Морозу в Великий Устюг</span>
+                       Загадайте своё главное желание на&nbsp;2020 год, <span class="question__title question__title_small" style="font-size: 70%;">мы&nbsp;отправим его Деду Морозу в&nbsp;Великий Устюг</span>
                     </div>
 
                     <form class="question-form question-form-ny_story container-fluid">

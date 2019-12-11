@@ -537,13 +537,12 @@ padding-top: 100px;
 
 .question__title{
 	font-family: 'Merriweather', serif;
-	font-size: calc( (100vw - 240px)* (40 - 20)/(1280 - 240)  + 20px);
+	font-size: calc( (100vw - 240px) * (40 - 20)/(1280 - 240)  + 20px);
 	line-height: 1.4;
 	
 	font-weight: bold;
 	text-align: left;
 }
-
 
 .question-trees-quantity{
 	margin-top: 50px;
@@ -943,9 +942,33 @@ padding-top: 100px;
 	z-index: -1;
 }
 
+.link-new{
+	position: relative;
+	padding-right: 40px;
+	color: yellow;
+}
 
+.link-new:hover{
+	color: white;
+	text-decoration: none;
+	color: red;
+}
 
-
+.link-new:after{
+	padding: 0px;
+	padding-right: 6px;
+	content: "new";
+	position: absolute;
+	top: -5px;
+	right: -2px;
+	font-style: italic;
+	font-weight: bold;
+	font-size: 60%;
+	color: red;
+	/*background-color: #fff;*/
+	border-radius: 5px;
+	text-shadow: none;
+}
 
 
 
