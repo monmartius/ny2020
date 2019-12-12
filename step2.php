@@ -60,7 +60,7 @@
                     <div class="msg-block__msg-box">
 
 <?php 
-    $ny_stories = dbQuery($db, "SELECT * FROM ny_story WHERE  1 ORDER BY likes DESC");
+    $ny_stories = dbQuery($db, "SELECT * FROM ny_story WHERE  checked = 1 ORDER BY likes DESC");
     $ny_stories = $ny_stories->fetchAll();
 ?>
     <?php foreach ($ny_stories as $ny_story) : ?>

@@ -791,6 +791,13 @@ padding-top: 100px;
 
 .results-ready-text{
 	text-align: left;
+	font-family: 'Merriweather', serif;
+	padding: 20px;
+}
+
+.results-ready-resume{
+
+	font-size: 30px;
 }
 
 .general-results-clause-digits{

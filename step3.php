@@ -59,7 +59,7 @@
                     <div class="msg-block__msg-box">
 
 <?php 
-    $wishes = dbQuery($db, "SELECT * FROM wish WHERE 1 ORDER BY likes DESC");
+    $wishes = dbQuery($db, "SELECT * FROM wish WHERE checked = 1 ORDER BY likes DESC");
     $wishes = $wishes->fetchAll();
 ?>
     <?php foreach ($wishes as $wish) : ?>

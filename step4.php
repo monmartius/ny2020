@@ -105,7 +105,7 @@
           
                                 <?php 
 
-                                    $gifts = dbQuery($db, 'SELECT gifts FROM user WHERE id = ?', $user_id);
+                                    $gifts = dbQuery($db, 'SELECT gifts FROM user WHERE id = ? ORDER BY id DESC', $user_id);
 
                                     $gifts = (string) $gifts->fetch()['0'];
 
@@ -126,7 +126,7 @@
 
                         <?php 
 
-                        $ny_story = dbQuery($db, 'SELECT content FROM ny_story WHERE author_id = ?', $user_id)->fetch()[0];
+                        $ny_story = dbQuery($db, 'SELECT content FROM ny_story WHERE author_id = ? ORDER BY id DESC', $user_id)->fetch()[0];
 
                         if($ny_story) :?>
 
@@ -162,7 +162,7 @@
 
                         <?php 
 
-                        $wish = dbQuery($db, 'SELECT content FROM wish WHERE author_id = ?', $user_id)->fetch()[0];
+                        $wish = dbQuery($db, 'SELECT content FROM wish WHERE author_id = ? ORDER BY id DESC', $user_id)->fetch()[0];
 
                         if($wish) :?>
 
@@ -202,7 +202,7 @@
 
 
 
-                            <div class="col-12 general-results-clause results-ready">
+                            <div class="col-12 general-results-clause results-ready results-ready-resume">
                                 
 <?php 
 
@@ -229,11 +229,7 @@
                     break;
 
                     
-                
-                default:
-                    # code...
-                    break;
-            }
+                }
 
 ?>
 
@@ -372,7 +368,7 @@
                         <div class="msg-block__msg-box">
 
                             <?php 
-                                $ny_stories = dbQuery($db, "SELECT * FROM ny_story WHERE  1 ORDER BY likes DESC");
+                                $ny_stories = dbQuery($db, "SELECT * FROM ny_story WHERE checked = 1 ORDER BY likes DESC");
                                 $ny_stories = $ny_stories->fetchAll();
                             ?>
                             
@@ -504,7 +500,7 @@
                     <div class="msg-block__msg-box">
 
 <?php 
-    $wishes = dbQuery($db, "SELECT * FROM wish WHERE 1 ORDER BY likes DESC");
+    $wishes = dbQuery($db, "SELECT * FROM wish WHERE checked = 1 ORDER BY likes DESC");
     $wishes = $wishes->fetchAll();
 ?>
     <?php foreach ($wishes as $wish) : ?>

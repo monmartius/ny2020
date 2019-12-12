@@ -123,7 +123,9 @@ class DB{
 }
 
 
-
+define('MESSAGE_UNPUBLISHED', 0);
+define('MESSAGE_PUBLISHED', 1);
+define('MESSAGE_DELETED', 2);
 
 
 $db = new DB(new PDO("sqlite:ny.db"));
@@ -136,13 +138,90 @@ $db ->prepare('SELECT * FROM user ORDER BY id DESC', 'allFromUsersDesc')
     ->query()
     ->fetchAll(); 
 
-$db ->prepare('SELECT content FROM comment WHERE ?')
-    ->alias('comment'); 
-
 $db->prepare('SELECT * FROM wish WHERE author_id = ?', 'wish');
 $db->prepare('SELECT * FROM ny_story WHERE author_id = ?', 'ny_story');
     
+
+
+$db->prepare('UPDATE ny_story SET checked = ? WHERE id = ?', 'ny_storyUpdate');
+$db->prepare('UPDATE wish SET checked = ? WHERE id = ?', 'wishUpdate');
+
+
+$db->prepare('UPDATE ny_story SET content = ? WHERE id = ?', 'ny_storyUpdateContent');
+$db->prepare('UPDATE wish SET content = ? WHERE id = ?', 'wishUpdateContent');
+
+
+
+
+
+
+
+if(isset($_REQUEST['delete'])){
+
+    $from = $_REQUEST['from'];
+    $id = $_REQUEST['id'];
+
+    $db->query($from . 'Update', [MESSAGE_DELETED, $id]);
+
     
+    echo 'delete ' . $id . ' from ' . $from;
+
+    die($db->stmntResult);
+    
+}
+
+
+if(isset($_REQUEST['publish'])){
+    
+    $publish = $_REQUEST['publish'];
+
+    $from = $_REQUEST['from'];
+    $id = $_REQUEST['id'];
+
+    if($publish == MESSAGE_PUBLISHED){
+
+        $db->query($from . 'Update', [MESSAGE_PUBLISHED, $id]);
+        
+    }
+    else{
+        
+        $db->query($from . 'Update', [MESSAGE_UNPUBLISHED, $id]);
+
+    }
+    
+    echo 'publish ' . $id . ' from ' . $from . 'status: ' . $publish ? 'MESSAGE_PUBLISHED' : 'MESSAGE_UNPUBLISHED';
+
+    die($db->stmntResult);
+}
+
+
+
+if(isset($_REQUEST['update'])){
+    
+    $from = $_REQUEST['from'];
+    $id = $_REQUEST['id'];
+    $content = $_REQUEST['content'];
+    
+    
+    $result = $db->query($from . 'UpdateContent', [$content, $id]);
+    echo 'update ' . $id . ' from ' . $from . 'content' . $content;
+    
+    die($db->stmntResult);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -179,8 +258,8 @@ $db->prepare('SELECT * FROM ny_story WHERE author_id = ?', 'ny_story');
 <?php 
 
 $users = $db->query('allFromUsersDesc')->fetchAll();
-$db->prepare('SELECT status FROM ny_story_status WHERE ny_story_id = ?', 'ny_storyStatus');
-$db->prepare('SELECT status FROM wish_status WHERE wish_id = ?', 'wishStatus');
+$db->prepare('SELECT checked FROM ny_story WHERE id = ?', 'ny_storyStatus');
+$db->prepare('SELECT checked FROM wish WHERE id = ?', 'wishStatus');
 
 ?>
 
@@ -261,12 +340,12 @@ $db->prepare('SELECT status FROM wish_status WHERE wish_id = ?', 'wishStatus');
                             
                         <?php 
 
-                            $ny_storyStatus = (int) $db->query( 'ny_storyStatus', [$user['id']] )->fetch()[0];
+                            $ny_storyStatus = (int) $db->query( 'ny_storyStatus', [$ny_story['id']] )->fetch()[0];
 
                         ?>
 
 
-                        <?php if($ny_storyStatus !== 2) :?>
+                        <?php if($ny_storyStatus !== MESSAGE_DELETED) :?>
 
 
                         <div class = "row user-message-content">
@@ -284,19 +363,26 @@ $db->prepare('SELECT status FROM wish_status WHERE wish_id = ?', 'wishStatus');
                             </div><!-- content -->
 
                             <div class="mod-wrap col-12">
-
-                                <?php if($ny_storyStatus == 0) : ?>
-
-                                    <a data-ny_story-status = "unpublished" data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-warning mod-btn mod-publish">НЕОПУБЛИКОВАНО / Опубликовать</a> 
+                            
+                            <?php
+                            if($ny_storyStatus == MESSAGE_UNPUBLISHED){
+                                    
+                                $btnPublishClass = "btn-warning";
+                                $btnPublishMessage = "НЕОПУБЛИКОВАНО / Опубликовать";
+                                    
+                            }
+                            else{
                                 
-                                <?php else : ?>
+                                $btnPublishClass = "btn-success";
+                                $btnPublishMessage = "ОПУБЛИКОВАНО / Распубликовать";
 
-                                    <a data-ny_story-status = "published" data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-success mod-btn mod-publish">ОПУБЛИКОВАНО / Снять с публикации </a> 
+                            }; 
 
-                                <?php endif; ?>
+                            ?>
         
-                                <a data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-info mod-btn mod-edit">Редактировать</a> 
-                                <a data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-danger mod-btn mod-delete">Удалить</a> 
+                                <a data-from = "ny_story" data-status = "<?= $ny_storyStatus ?>" data-id = "<?= $ny_story['id'] ?>" href="#" class = "btn mod-btn <?=  $btnPublishClass ?> mod-publish"><?= $btnPublishMessage ?></a> 
+                                <a data-from = "ny_story" data-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-info mod-btn mod-update">Редактировать</a> 
+                                <a data-from = "ny_story" data-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-danger mod-btn mod-delete">Удалить</a> 
                             </div>
 
                         </div><!-- row -->
@@ -343,14 +429,14 @@ $db->prepare('SELECT status FROM wish_status WHERE wish_id = ?', 'wishStatus');
                                 
                             <?php 
 
-                            $wishStatus = (int) $db->query( 'wishStatus', [$user['id']] )->fetch()[0];
+                            $wishStatus = (int) $db->query( 'wishStatus', [$wish['id']] )->fetch()[0];
 
                             ?>
 
 
 
 
-                            <?php if($wishStatus !== 2) :?>
+                            <?php if($wishStatus !== MESSAGE_DELETED) :?>
 
 
                             <div class = "row user-message-content">
@@ -366,18 +452,24 @@ $db->prepare('SELECT status FROM wish_status WHERE wish_id = ?', 'wishStatus');
 
                                 <div class="mod-wrap col-12">
 
-                                <?php if($wishStatus == 0) : ?>
-                                    
-                                    <a data-wish-status = "unpublished" data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-warning mod-btn mod-publish">НЕОПУБЛИКОВАНО / Опубликовать</a> 
+                                <?php 
                                 
-                                <?php else : ?>
+                                if($wishStatus == MESSAGE_UNPUBLISHED){
+                                    
+                                    $btnPublishClass = "btn-warning";
+                                    $btnPublishMessage = "НЕОПУБЛИКОВАНО / Опубликовать";
+                                }
+                                else{
+                                    
+                                    $btnPublishClass = "btn-success";
+                                    $btnPublishMessage = "ОПУБЛИКОВАНО / Распубликовать";
 
-                                    <a data-wish-status = "published" data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-success mod-btn mod-publish">ОПУБЛИКОВАНО / Снять с публикации </a> 
+                                }
 
-                                <?php endif; ?>
-
-                                    <a data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-info mod-btn mod-edit">Редактировать</a> 
-                                    <a data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-danger mod-btn mod-delete">Удалить</a> 
+                                ?>
+                                    <a data-from = "wish" data-status = "<?= $wishStatus?>" data-id = "<?= $wish['id'] ?>" href="#" class = "btn mod-btn <?=  $btnPublishClass ?> mod-publish"><?= $btnPublishMessage ?></a> 
+                                    <a data-from = "wish" data-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-info mod-btn mod-update">Редактировать</a> 
+                                    <a data-from = "wish" data-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-danger mod-btn mod-delete">Удалить</a> 
                                 </div>
 
                             </div><!-- row -->
