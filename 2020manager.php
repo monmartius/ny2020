@@ -43,27 +43,31 @@ class DB{
         $this->db = $db;
     }
 
-    function prepare($query){
+    function prepare($query, $alias = null){
 
         $this->stmnt = $this->db->prepare($query);
         
-        deb ($this->stmnt);
-
+        
         if(!$this->stmnt){
+            
+            die("Fail prepare " . "'" . $query . "'");        
+            
+        }
 
-            die("Fail prepare " . "'" . $query . "'");
+        if($alias){
+
+            $this->stmnts[$alias] = $this->stmnt;
         }
 
         return $this;
     }
 
 
-    function query($query = NULL, $data = NULL){
+    function query($alias = null, $data = null){
 
+        if($alias){
 
-        if($query){
-
-            $this->stmnt = $this->stmnts[$query];
+            $this->stmnt = $this->stmnts[$alias];
         }
 
         if(!$data){
@@ -82,7 +86,7 @@ class DB{
         }
 
         if(!$this->stmntResult){
-            die("Fail exute query" . "'" . $query . "'");    
+            die("Fail execute query" . "'" . $query . "'");    
         }
         
 
@@ -104,14 +108,18 @@ class DB{
         return $this->fetchResult;
     }
 
-
     function alias($alias){
-        
-        $this->stmnts[$alias] = $this->stmnt;
-        
-        return $this;
-    }
 
+        if($alias){
+
+            $this->stmnts[$alias] = $this->stmnt;
+        }
+        else{
+
+            die('No alias in ' . __FILE__ . __LINE__);
+        }
+
+    }
 }
 
 
@@ -120,18 +128,21 @@ class DB{
 
 $db = new DB(new PDO("sqlite:ny.db"));
 
-$db ->prepare('SELECT * FROM user WHERE 1')
-    ->alias('users')
+$db ->prepare('SELECT * FROM user', 'allFromUsers')
+    ->query()
+    ->fetchAll(); 
+
+$db ->prepare('SELECT * FROM user ORDER BY id DESC', 'allFromUsersDesc')
     ->query()
     ->fetchAll(); 
 
 $db ->prepare('SELECT content FROM comment WHERE ?')
     ->alias('comment'); 
 
-$comment = $db->query('comment', $user['id'])->fetch();
-
-
-
+$db->prepare('SELECT * FROM wish WHERE author_id = ?', 'wish');
+$db->prepare('SELECT * FROM ny_story WHERE author_id = ?', 'ny_story');
+    
+    
 
 ?>
 <!DOCTYPE html>
@@ -150,26 +161,11 @@ $comment = $db->query('comment', $user['id'])->fetch();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/adminstyles.css">
     <style type="text/css">
-        body pre{
-            color: #fff;
-        }
-
-        .user-table{
-            border: 1px solid #000;
-            padding: 3px;
-        }
-
-        .user-table tr{
-            border: 1px solid #000;
-            padding: 3px;
-        }
-        .user-table td{
-            border: 1px solid #000;
-            padding: 3px;
-        }
 
     </style>
 </head>
+
+
 <body>
 	<div class="container">
 		<div class="row">
@@ -180,54 +176,239 @@ $comment = $db->query('comment', $user['id'])->fetch();
 
 		<div class="row">
 
-<table class="user-table">
-
-<tr>
-    <td>id</td><td>name</td><td>email</td><td>Комментарий</td> 
-</tr>        
-    
-
-
-<?php foreach ($users as $user) : ?>
 <?php 
 
-    
+$users = $db->query('allFromUsersDesc')->fetchAll();
+$db->prepare('SELECT status FROM ny_story_status WHERE ny_story_id = ?', 'ny_storyStatus');
+$db->prepare('SELECT status FROM wish_status WHERE wish_id = ?', 'wishStatus');
+
 ?>
 
-<tr>
-    <td>
-        <?= $user['id'] ?>
-    </td>
-
-    <td>
-        <?= $user['name'] ?>
-    </td>
-
-    <td>
-        <?= $user['email'] ?>
-    </td>
+            <div class="col-12">
+                
+                <?php foreach ($users as $user) : ?>
 
 
-    <td>
-        <?php 
-            $comment = $db->query('userComment',[$user['id']])->fetch()[0];
-            if($comment){
-                print_r($comment);
-            }
-            else{
-                echo "пусто";
-            }
-        ?>
-    </td>
+                    <?php 
 
-</tr>    
-    
 
-<?php endforeach; ?>
+                        $ny_storyRow = $db->query( 'ny_story', [$user['id']] )->fetch();
+                        $ny_storyArr = $db->query( 'ny_story', [$user['id']] )->fetchAll();
 
-</table>        
-			
-		</div>
-	</div>
+
+                        $wishRow = $db->query( 'wish', [$user['id']] )->fetch();
+                        $wishArr = $db->query( 'wish', [$user['id']] )->fetchAll();
+
+                   ?>
+
+                <?php if($wishRow || $ny_storyRow) :?>
+
+                <div class="row user-row">
+                
+                    <div class="col-3">
+                        <div class="row">
+                            <div class="col-12">
+                                <span class = "user-row-title">id: </span><?= $user['id'] ?>
+                            </div>
+                            <div class="col-12">
+                                <span class = "user-row-title"> Имя: </span><?= $user['name'] ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3"><span class = "user-row-title">email: </span><?= $user['email'] ?></div>
+                    <div class="col-3"><span class = "user-row-title">Елки: </span><?= $user['trees'] ?></div>
+
+                    <?php if ($user['gifts'] == -1) : ?>
+                    
+                        <div class="col-12">
+
+                            <span class = "user-row-title">Подарки: </span>
+                            "Даже страшно об этом подумать!";
+
+                        </div>
+
+                    <?php else :?>
+
+                        <div class="col-3">
+                        
+                            <span class = "user-row-title">Подарки: </span>                            
+                            <?= $user['gifts']; ?>
+                        
+                        </div>
+
+                    <?php endif; ?>
+
+                    
+
+
+
+
+
+
+
+                    <?php if( $ny_storyArr ) :?>
+
+                    <div class="col-12">
+
+                        <!-- <h5 class = "user-h">История:</h5> -->
+                        <h5 class = "user-h">Историй: <?= count($ny_storyArr) ?> </h5>
+                        
+                        <?php foreach ($ny_storyArr as $ny_story) :?>
+
+                            
+
+                            
+                        <?php 
+
+                            $ny_storyStatus = (int) $db->query( 'ny_storyStatus', [$user['id']] )->fetch()[0];
+
+                        ?>
+
+
+                        <?php if($ny_storyStatus !== 2) :?>
+
+
+                        <div class = "row user-message-content">
+
+                            <div data-ny_story-id = "<?= $ny_story['id'] ?>" class = "content mod-content col-12">
+
+
+                                <?php 
+                                    
+                                    echo $ny_story['content'];
+                                
+                                ?>
+
+
+                            </div><!-- content -->
+
+                            <div class="mod-wrap col-12">
+
+                                <?php if($ny_storyStatus == 0) : ?>
+
+                                    <a data-ny_story-status = "unpublished" data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-warning mod-btn mod-publish">НЕОПУБЛИКОВАНО / Опубликовать</a> 
+                                
+                                <?php else : ?>
+
+                                    <a data-ny_story-status = "published" data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-success mod-btn mod-publish">ОПУБЛИКОВАНО / Снять с публикации </a> 
+
+                                <?php endif; ?>
+        
+                                <a data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-info mod-btn mod-edit">Редактировать</a> 
+                                <a data-ny_story-id = "<?= $ny_story['id'] ?>" href="#" class = "btn btn-danger mod-btn mod-delete">Удалить</a> 
+                            </div>
+
+                        </div><!-- row -->
+                        
+                        <?php endif; ?>
+
+                        <?php endforeach; ?>
+
+                    </div><!-- col-12 -->
+
+                    <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <?php if($wishArr) :?>
+
+                    <div class="col-12">
+                        
+                        <h5 class = "user-h">Желаний: <?= count($wishArr) ?> </h5>
+
+                    
+                            <?php 
+                            // echo($wishRow['content']) 
+                            ?>
+                    
+                            <?php foreach ($wishArr as $wish) :?>
+
+
+                                
+                                
+                            <?php 
+
+                            $wishStatus = (int) $db->query( 'wishStatus', [$user['id']] )->fetch()[0];
+
+                            ?>
+
+
+
+
+                            <?php if($wishStatus !== 2) :?>
+
+
+                            <div class = "row user-message-content">
+
+                                <div data-wish-id = "<?= $wish['id'] ?>"  class = "content mod-content col-12">
+
+                                        <?php 
+                                                echo $wish['content'];
+                                        ?>
+                                    
+
+                                </div><!-- content -->
+
+                                <div class="mod-wrap col-12">
+
+                                <?php if($wishStatus == 0) : ?>
+                                    
+                                    <a data-wish-status = "unpublished" data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-warning mod-btn mod-publish">НЕОПУБЛИКОВАНО / Опубликовать</a> 
+                                
+                                <?php else : ?>
+
+                                    <a data-wish-status = "published" data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-success mod-btn mod-publish">ОПУБЛИКОВАНО / Снять с публикации </a> 
+
+                                <?php endif; ?>
+
+                                    <a data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-info mod-btn mod-edit">Редактировать</a> 
+                                    <a data-wish-id = "<?= $wish['id'] ?>" href="#" class = "btn btn-danger mod-btn mod-delete">Удалить</a> 
+                                </div>
+
+                            </div><!-- row -->
+
+                            <?php endif; ?>
+
+
+                            <?php endforeach; ?>
+                            
+                        </div><!-- col-12 -->
+
+                    <?php endif; ?>
+                    
+                
+                
+                </div><!-- row user-row -->
+
+                <?php endif; ?>
+
+            <?php endforeach; ?>
+
+
+
+
+
+            </div><!-- class="col-12 -->    
+		</div>        <!-- row -->
+	</div>    <!-- container -->
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="admin.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
 </body>
 </html>

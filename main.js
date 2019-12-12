@@ -103,7 +103,6 @@ function animateCSS(element, animationName, callback) {
 
 
 
-
 $(window).scrollTop(0);
 
 

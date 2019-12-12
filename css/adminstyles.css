@@ -54,27 +54,102 @@ body {
 	background-size: 100% 100%;	
 }
 
+
+
+
+body pre{
+	color: #fff;
+}
+
+.user-table{
+	border: 1px solid #000;
+	padding: 3px;
+}
+
+.user-table tr{
+	border: 1px solid #000;
+	padding: 3px;
+}
+.user-table td{
+	border: 1px solid #000;
+	padding: 3px;
+}
+
+.user-row{
+
+	margin-top: 30px;
+	margin-bottom: 30px;
+	border: 1px solid yellow;
+	padding: 15px 0;
+	border-radius: 10px;
+}
+
+.user-row-title{
+
+	color: yellow;
+	font-weight: bold;
+	font-size: 85%;
+	margin-right: 10px;
+}
+.user-h{
+	
+	color: yellow;
+	margin-top: 30px;
+	/* font-size: 85%; */
+}
+.content{
+	margin-top: 10px;
+	border: 1px solid orange;
+	padding: 15px;
+	/* margin: 15px; */
+	background-color: #fff;
+	color: green;
+}
+
+.content + *{
+	background-color: #fff;
+}
+
+.mod-btn{
+	margin: 0 5px 5px;
+	font-size: 12px;
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+
+}
+
+.user-message-content-textarea{
+
+	min-height: 300px;
+}
+
+
+
+
+
 .btn {
 
 	border-radius: 5px;
+	/* height: 40px; */
+	padding: 5px 10px;
 
-
-	font-size: 130%;
+	/* font-size: 130%; */
 
 	font-weight: bold;
 
-	padding-left: 30px;
-	padding-right: 30px;
-	padding-bottom: 10px;
+	margin: 5px 10px;
 
-	background-color: #1c7430;
+	/* background-color: #1c7430; */
 	color: white;
+
+	align-self: center;
 }
 
 .btn:hover{
 
 	color: white;
-	background-color: #04b657;
+	background-color: #02199e;
 }
 
 .btn:active {
