@@ -7,6 +7,8 @@ function cahngeStatistic(str){
     ny_storyAll = arr[0];
     ny_storyPublished = arr[1];
     ny_storyDeleted = arr[2];
+    console.log('ny_storyDeleted')
+    console.log(ny_storyDeleted)
     ny_storyUnpublished = arr[3];
     wishAll = arr[4];
     wishPublished = arr[5];

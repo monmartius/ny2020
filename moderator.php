@@ -319,7 +319,7 @@ if(isset($_REQUEST['update'])){
 					</div>
 					<div class="col-2"><span class="user-row-title">Удаленных: </span>
 						
-						<span class="ny_story-deleteded">
+						<span class="ny_story-deleted">
 
 						<?php 
 							echo ($db->query('ny_storyDeleted')->fetch()[0]);
