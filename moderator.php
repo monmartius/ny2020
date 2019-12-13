@@ -173,6 +173,62 @@ $db->prepare('UPDATE wish SET content = ? WHERE id = ?', 'wishUpdateContent');
 
 
 
+
+
+$db->prepare('SELECT count(*) FROM wish WHERE 1', 'wishAll');
+$db->prepare('SELECT count(*) FROM wish WHERE checked = 1', 'wishPublished');
+$db->prepare('SELECT count(*) FROM wish WHERE checked = 2', 'wishDeleted');
+$db->prepare('SELECT count(*) FROM wish WHERE checked = 0', 'wishUnpublished');
+
+$db->prepare('SELECT * FROM wish WHERE author_id = ?', 'wish');
+
+
+
+$db->prepare('SELECT count(*) FROM ny_story WHERE 1', 'ny_storyAll');
+$db->prepare('SELECT count(*) FROM ny_story WHERE checked = 1', 'ny_storyPublished');
+$db->prepare('SELECT count(*) FROM ny_story WHERE checked = 2', 'ny_storyDeleted');
+$db->prepare('SELECT count(*) FROM ny_story WHERE checked = 0', 'ny_storyUnpublished');
+
+$db->prepare('SELECT * FROM ny_story WHERE author_id = ?', 'ny_story');
+    
+
+
+$db->prepare('SELECT count(*) FROM wish WHERE author_id = ?', 'wishUser');
+
+$db->prepare('SELECT count(*) FROM wish 
+                WHERE checked = 1 AND author_id = ?', 'wishUserPublished');
+
+$db->prepare('SELECT count(*) FROM wish 
+                WHERE checked = 2 AND author_id = ?', 'wishUserDeleted');
+
+$db->prepare('SELECT count(*) FROM wish 
+                WHERE checked = 0 AND author_id = ?', 'wishUserUnpublished');
+
+
+
+
+
+$db->prepare('SELECT count(*) FROM ny_story 
+                WHERE 1 AND author_id = ?', 'ny_storyUser');
+
+$db->prepare('SELECT count(*) FROM ny_story 
+                WHERE checked = 1 AND author_id = ?', 'ny_storyUserPublished');
+
+$db->prepare('SELECT count(*) FROM ny_story 
+                WHERE checked = 2 AND author_id = ?', 'ny_storyUserDeleted');
+
+$db->prepare('SELECT count(*) FROM ny_story 
+                WHERE checked = 0 AND author_id = ?', 'ny_storyUserUnpublished');
+
+
+
+
+
+
+
+
+
+
 function statistic(){
 
 	global $db;
@@ -421,9 +477,50 @@ $db->prepare('SELECT checked FROM wish WHERE id = ?', 'wishStatus');
                         $wishRow = $db->query( 'wish', [$user['id']] )->fetch();
                         $wishArr = $db->query( 'wish', [$user['id']] )->fetchAll();
 
+
+                        $ny_storyUser = $db->query('ny_storyUser', $user['id'])->fetch()[0];
+                        $ny_storyUserUnpublished = $db->query('ny_storyUserUnpublished', $user['id'])->fetch()[0];
+                        $ny_storyUserPublished = $db->query('ny_storyUserPublished', $user['id'])->fetch()[0];
+                        $ny_storyUserDeleted = $db->query('ny_storyUserDeleted', $user['id'])->fetch()[0];
+
+                        $wishUser = $db->query('wishUser', $user['id'])->fetch()[0];
+                        $wishUserUnpublished = $db->query('wishUserUnpublished', $user['id'])->fetch()[0];
+                        $wishUserPublished = $db->query('wishUserPublished', $user['id'])->fetch()[0];
+                        $wishUserDeleted = $db->query('wishUserDeleted', $user['id'])->fetch()[0];
+
+
+                        // echo 
+                        //     ' $ny_storyUser =' . $ny_storyUser . BR .
+                        //     ' $ny_storyUserUnpublished ' . $ny_storyUserUnpublished . BR .
+                        //     ' $ny_storyUserPublished ' . $ny_storyUserPublished . BR .
+                        //     ' $ny_storyUserDeleted ' . $ny_storyUserDeleted . BR .
+
+                        //     ' $wishUser ' . $wishUser . BR .
+                        //     ' $wishUserUnpublished ' . $wishUserUnpublished . BR .
+                        //     ' $wishUserPublished ' . $wishUserPublished . BR .
+                        //     ' $wishUserDeleted ' . $wishUserDeleted . BR .
+                        //     '--------------------------------'  . BR 
+                        // ;
+
+
                    ?>
 
-                <?php if($wishRow || $ny_storyRow) :?>
+
+
+                <?php if(
+                            ( $wishRow || $ny_storyRow ) 
+                            && 
+                            ( 
+                                ( ( $ny_storyUserUnpublished > 0 ) || ( $ny_storyUserPublished > 0 ) )
+                                || 
+                                ( ( $wishUserUnpublished > 0 ) || ( $wishUserPublished > 0 )  ) 
+                            ) 
+                        ) 
+                        :?>
+
+                
+<!-- ==================================================== -->
+
 
                 <div class="row user-row">
                 
@@ -469,12 +566,12 @@ $db->prepare('SELECT checked FROM wish WHERE id = ?', 'wishStatus');
 
 
 
-                    <?php if( $ny_storyArr ) :?>
+                    <?php if( $ny_storyArr &&  ( ( $ny_storyUserUnpublished > 0 ) || ( $ny_storyUserPublished > 0 ) ) ) :?>
 
                     <div class="col-12">
 
                         <!-- <h5 class = "user-h">История:</h5> -->
-                        <h5 class = "user-h">Историй: <?= count($ny_storyArr) ?> </h5>
+                        <h5 class = "user-h">Историй: <?= $ny_storyUserUnpublished + $ny_storyUserPublished ?> </h5>
                         
                         <?php foreach ($ny_storyArr as $ny_story) :?>
 
@@ -530,9 +627,20 @@ $db->prepare('SELECT checked FROM wish WHERE id = ?', 'wishStatus');
 
                         </div><!-- row -->
                         
+<!-- ==================================================== -->
+
+
+
+
+
                         <?php endif; ?>
 
+
+
+
                         <?php endforeach; ?>
+
+
 
                     </div><!-- col-12 -->
 
@@ -554,11 +662,11 @@ $db->prepare('SELECT checked FROM wish WHERE id = ?', 'wishStatus');
 
 
 
-                    <?php if($wishArr) :?>
+                    <?php if( $wishArr && ( ( $wishUserUnpublished > 0 ) || ( $wishUserPublished > 0 )  ) ) :?>
 
                     <div class="col-12">
                         
-                        <h5 class = "user-h">Желаний: <?= count($wishArr) ?> </h5>
+                        <h5 class = "user-h">Желаний: <?= $wishUserPublished + $wishUserUnpublished ?> </h5>
 
                     
                             <?php 
@@ -629,6 +737,14 @@ $db->prepare('SELECT checked FROM wish WHERE id = ?', 'wishStatus');
                 
                 
                 </div><!-- row user-row -->
+
+
+
+
+
+
+
+
 
                 <?php endif; ?>
 

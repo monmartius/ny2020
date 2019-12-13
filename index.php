@@ -597,7 +597,9 @@ else{
                 <div class="container">
                         <div class="row">
                             <div class="ny-header-picture col-6 col-sm-4 col-lg-3">
-                                <a href="#" class = "reset"><img src="images/ny2020.png" alt="" class="ny-header-picture__img"></a>
+                                <a href="#" class = "reset">
+                                    <img src="images/ny2020.png" alt="" class="ny-header-picture__img">
+                                </a>
                             </div>
 
                             <div class="ny-header__slogan col-sm-5">
@@ -606,7 +608,9 @@ else{
 
 
                             <div class="ny-header-logo col-4 col-sm-3 col-lg-2">
-                                <a href="#" class = "reload"><img src="images/LOGOSTICK.png" alt="" class="ny-header-logo__img"></a>
+                                <!-- <a href="#" class = "reload"> -->
+                                    <img src="images/LOGOSTICK.png" alt="" class="ny-header-logo__img">
+                                <!-- </a> -->
                             </div>
 
 

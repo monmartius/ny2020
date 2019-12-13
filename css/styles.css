@@ -798,6 +798,7 @@ padding-top: 100px;
 .results-ready-resume{
 
 	font-size: 30px;
+	padding: 10px 25px;
 }
 
 .general-results-clause-digits{
@@ -952,8 +953,9 @@ padding-top: 100px;
 
 .link-new{
 	position: relative;
-	padding-right: 40px;
+	/*padding-right: 40px;*/
 	color: yellow;
+	/*display: inline-block;*/
 }
 
 .link-new:hover{
@@ -966,8 +968,8 @@ padding-top: 100px;
 	padding: 0px;
 	padding-right: 6px;
 	content: "new";
-	position: absolute;
-	top: -5px;
+	position: relative;
+	top: -15px;
 	right: -2px;
 	font-style: italic;
 	font-weight: bold;
@@ -1043,7 +1045,9 @@ padding-top: 100px;
 	width: 100%;
 }
 
-/*.{}*/
+.question__title_small{
+	display: inline-block;
+}
 /*.{}*/
 /*.{}*/
 /*.{}*/

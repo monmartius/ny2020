@@ -276,6 +276,11 @@ $('.question-btn-gifts-fear').on('click', function(e){
 
 	if(!Number.isInteger(gifts)){
 
+		if(gifts > 20){
+
+			gifts = 20;
+		}
+
 		gifts = -1;
 	}
 
@@ -297,6 +302,7 @@ $('.question-btn-gifts-fear').on('click', function(e){
 	});
 
 });
+
 
 $('#question-gifts-input').on('keyup change', function(e){
 
@@ -333,6 +339,12 @@ $('.question-gifts-btn-next').on('click', function(e){
 		gifts = 0;
 	}
 
+	if(gifts > 20){
+
+		$('.label-for-question-gifts-input').html('Укажите число от 0 до 20');
+	}
+	else{
+
 		$.ajax({
 			url: indexPage,
 			type: 'POST',
@@ -342,13 +354,17 @@ $('.question-gifts-btn-next').on('click', function(e){
 			},
 			success: function (res) {
 
-  // window.location.href=window.location.href
-  					reload();
+	// window.location.href=window.location.href
+						reload();
 			},
 			error: function (res) {
 				console.log(res.responseText);
 			}
-	});
+		});
+
+	}
+
+
 
 });
 
