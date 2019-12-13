@@ -21,7 +21,7 @@ function cahngeStatistic(str){
     $('.ny_story-unpublished').html(ny_storyUnpublished);
     $('.wish-all').html(wishAll);
     $('.wish-published').html(wishPublished);
-    $('.wishdeleted').html(wishDeleted);
+    $('.wish-deleted').html(wishDeleted);
     $('.wish-unpublished').html(wishUnpublished);
 
 }
