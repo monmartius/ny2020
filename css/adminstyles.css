@@ -656,8 +656,23 @@ body pre{
 }
 
 
+.panel-info * {
+	outline: 1px solid red;
 
-/*.{}*/
+}
+.panel-info{
+	top: 0;
+	left: 0;
+	position: fixed;
+	margin: auto;
+	background-color: #393185;
+	z-index: 1;
+	padding: 20px;
+}
+body{
+	margin-top: 150px;
+	position: relative;
+}
 /*.{}*/
 /*.{}*/
 /*.{}*/

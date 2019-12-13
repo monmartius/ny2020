@@ -1,5 +1,31 @@
 indexPage = location.href;
 
+function cahngeStatistic(str){
+
+    arr = str.split(",");
+
+    ny_storyAll = arr[0];
+    ny_storyPublished = arr[1];
+    ny_storyDeleted = arr[2];
+    ny_storyUnpublished = arr[3];
+    wishAll = arr[4];
+    wishPublished = arr[5];
+    wishDeleted = arr[6];
+    wishUnpublished = arr[7];
+
+    $statistis = $('statistis');
+
+    $('.ny_story-all').html(ny_storyAll);
+    $('.ny_story-published').html(ny_storyPublished);
+    $('.ny_story-deleted').html(ny_storyDeleted);
+    $('.ny_story-unpublished').html(ny_storyUnpublished);
+    $('.wish-all').html(wishAll);
+    $('.wish-published').html(wishPublished);
+    $('.wishdeleted').html(wishDeleted);
+    $('.wish-unpublished').html(wishUnpublished);
+
+}
+    
 
 $('.mod-update').on('click', function(e){
 
@@ -128,6 +154,7 @@ $('.mod-publish').on('click', function(e){
             $this.addClass(publishClass);
             
             console.log(res);
+            cahngeStatistic(res);
 
         },
         error: function (res) {
@@ -177,6 +204,7 @@ $('.mod-delete').on('click', function(e){
             $message.html($('<div class = "wait-message">Данные удалены</div>'));
             // .detach();
             console.log(res);
+            cahngeStatistic(res);
 
         },
         error: function (res) {
