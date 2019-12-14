@@ -83,6 +83,11 @@ $('.mod-update').on('click', function(e){
 
             success: function (res) {
    
+
+                if(res == "Session is over."){
+
+                    location.reload();
+                }
                 
                 $waitMessage.detach();
                 
@@ -124,6 +129,8 @@ $('.mod-publish').on('click', function(e){
 
     e.preventDefault();
 
+
+
     var $this = $(this);
 
     var publish = $this.data('status') == "1" ? 0 : 1;
@@ -148,6 +155,11 @@ $('.mod-publish').on('click', function(e){
         data: data,
 
         success: function (res) {
+
+            if(res == "Session is over."){
+
+                location.reload();
+            }
             
             $this.removeClass('btn-success');
             $this.removeClass('btn-warning');
@@ -164,13 +176,6 @@ $('.mod-publish').on('click', function(e){
         }
     });
 
-
-
-
-
-    console.log(data);
-
-    
 
 });
 
@@ -201,6 +206,13 @@ $('.mod-delete').on('click', function(e){
         data: data,
 
         success: function (res) {
+
+
+
+            if(res == "Session is over."){
+
+                location.reload();
+            }
             
             $message = $this.closest('.user-message-content');
             $message.html($('<div class = "wait-message">Данные удалены</div>'));

@@ -1,13 +1,55 @@
 
 <?php 
-session_start();
 
-if(!isset($_SESSION['access']) || $_SESSION['access']!=true){
 
-	header("location:login.php");
+
+function __header($url){
+
+    $dirname = dirname($_SERVER['PHP_SELF']);
+    // $dirname = str_replace(dirname($_SERVER['PHP_SELF']), "/", "\\" );
+    
+    if($dirname != ""){
+    
+        if ($dirname[strlen($dirname) - 1] == '\\') {
+            
+            $dirname = substr($dirname, 0, -1);
+        }
+    }
+    
+    if($dirname != ""){
+        if ($dirname[strlen($dirname) - 1] == '/') {
+            
+            $dirname = substr($dirname, 0, -1);
+        }
+    }
+    
+    $url = "Location: http://" . $_SERVER['HTTP_HOST'] . $dirname . "/" . $url;
+
+    return($url);
 }
 
 
+session_start();
+
+
+if(!isset($_SESSION['access']) || $_SESSION['access'] != true){
+
+	header(__header("login.php"));
+}
+
+
+
+if(isset($_REQUEST['logout'])){
+
+    unset($_SESSION['logout']);
+    unset($_SESSION['access']);
+    unset($_SESSION['paswd']);
+    header(__header("login.php"));
+}
+
+// deb($_REQUEST);
+
+// die();
 
 define('BR', "<br>");
 
@@ -258,6 +300,11 @@ function statistic(){
 
 if(isset($_REQUEST['delete'])){
 
+    if(!isset($_SESSION['access']) || $_SESSION['access']!=true){
+
+        die('Session is over.');
+    }
+
     $from = $_REQUEST['from'];
     $id = $_REQUEST['id'];
 
@@ -272,6 +319,15 @@ if(isset($_REQUEST['delete'])){
 
 
 if(isset($_REQUEST['publish'])){
+
+
+
+    if(!isset($_SESSION['access']) || $_SESSION['access']!=true){
+
+        die('Session is over.');
+    }
+
+
     
     $publish = $_REQUEST['publish'];
 
@@ -297,6 +353,12 @@ if(isset($_REQUEST['publish'])){
 
 
 if(isset($_REQUEST['update'])){
+
+
+    if(!isset($_SESSION['access']) || $_SESSION['access']!=true){
+
+        die('Session is over.');
+    }
     
     $from = $_REQUEST['from'];
     $id = $_REQUEST['id'];
@@ -444,7 +506,13 @@ if(isset($_REQUEST['update'])){
 
 					</div>
 
+                    <div class="col-2">
+                        <a href="?logout" class="btn btn-warning btn-exit">Выход</a>
+                    </div>
+
+
 				</div>
+
 				
 			</div>
 		</div>
