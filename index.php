@@ -151,7 +151,7 @@ if( isset($_SESSION['user_id']) ){
 
         $user_id = $db->lastInsertId();
 
-        setcookie( 'user_id', $user_id, time()+60*60*24*30);
+        setcookie( 'user_id', $user_id, time()+60*60);
         
         $_SESSION['user_id'] = $user_id;
 
@@ -592,7 +592,7 @@ else{
     data-user_id = "<?= $user['id'] ?>"
     data-username = "<?= $user['name'] ?>"
     data-step = "<?= $user['step'] ?>">
-    <?php deb($ss) ?></div>
+    </div>
             <div class="ny-header">
                 <div class="container">
                         <div class="row">

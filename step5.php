@@ -8,7 +8,7 @@
             </div>
 
             <div class="col-12 col-lg-8 offset-lg-2 congratulations">
-Дарим вам бесплатное размещение баннера на&nbsp;нашем <a class = "link-new" href="http://2999999.ru/">сайте</a> сроком на&nbsp;1&nbsp;месяц*, для этого укажите своей свой email-адрес, чтобы мы&nbsp;связались с&nbsp;вами. <br>
+Дарим вам бесплатное размещение баннера на&nbsp;нашем <a class = "link-new" href="http://2999999.ru/">сайте</a> сроком на&nbsp;1&nbsp;месяц*, для этого укажите свой email-адрес, чтобы мы&nbsp;связались с&nbsp;вами. <br>
             </div>
             <div class="col-12 congratulations-v-gutter"></div>
 <?php 
